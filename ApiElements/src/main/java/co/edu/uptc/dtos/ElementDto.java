@@ -19,6 +19,7 @@ public class ElementDto {
       ElementDto elementDto = new ElementDto();
       elementDto.setName(element.getName());
       elementDto.setDescription(element.getDescription());
+      elementDto.setPrice(element.getPrice());
       elementDto.setId(element.getId());
       return elementDto;
    }

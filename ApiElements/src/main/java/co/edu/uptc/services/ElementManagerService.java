@@ -8,7 +8,11 @@ import org.springframework.stereotype.Service;
 
 import co.edu.uptc.models.ElementModel;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -52,10 +56,6 @@ public class ElementManagerService {
 
     public void addElement(ElementModel element) throws IOException {
         initFile();
-
-        if (!element.isValid()) {
-            throw new IllegalArgumentException("El elemento no cumple con los requisitos mínimos: " + "Nombre debe tener al menos 10 caracteres y descripción al menos 100 caracteres.");
-        }
 
         RandomAccessFile raf = new RandomAccessFile(getAbsPathElements().toString(), "rw");
         long fileLength = raf.length();
@@ -157,94 +157,3 @@ public class ElementManagerService {
         return Paths.get(pathDirectory.toString(), pathIdPeople);
     }
 }
-
-
-
-/* 
-  public String getFileelements() {
-  String contentFile = "";
-  try {
-  String fullContent = Files.readString(getAbsPathelements());
-  List<ElementModel> elements = mapper.readValue(fullContent, new
-  TypeReference<List<ElementModel>>() {
-  });
-  List<ElementModel> filteredelements = new ArrayList<>();
-  
-  for (ElementModel element : elements) {
-  if (!element.isDeleted()) {
-  filteredelements.add(element);
-  }
-  }
-  
-  contentFile =
-  mapper.writerWithDefaultPrettyPrinter().writeValueAsString(filteredelements);
-  } catch (Exception e) {
-  e.printStackTrace();
-  }
-  return contentFile;
-  }
-  
-  public ElementModel getelementById(Long id) throws IOException {
-  initFile();
-  String fullContent = Files.readString(getAbsPathelements());
-  List<ElementModel> elements = mapper.readValue(fullContent, new
-  TypeReference<List<ElementModel>>() {
-  });
-  
-  for (ElementModel element : elements) {
-  if (element.getId().equals(id) && !element.isDeleted()) {
-  return element;
-  }
-  }
-  
-  return null;
-  }
-  
-  public ElementModel deleteelementById(Long id) throws IOException {
-  initFile();
-  String fullContent = Files.readString(getAbsPathelements());
-  List<ElementModel> elements = mapper.readValue(fullContent, new
-  TypeReference<List<ElementModel>>() {
-  });
-  
-  for (ElementModel element : elements) {
-  if (element.getId().equals(id) && !element.isDeleted()) {
-  element.setDeleted(true);
-  mapper.writerWithDefaultPrettyPrinter().writeValue(getAbsPathelements().toFile
-  (), elements);
-  return element;
-  }
-  }
-  
-  return null;
-  }
-  
-  public List<ElementModel> getLowestSalary() throws IOException {
-  initFile();
-  String fullContent = Files.readString(getAbsPathelements());
-  List<ElementModel> elements = mapper.readValue(fullContent, new
-  TypeReference<List<ElementModel>>() {
-  });
-  
-  List<ElementModel> activeelements = new ArrayList<>();
-  double lowestSalary = Double.MAX_VALUE;
-  
-  for (ElementModel element : elements) {
-  if (!element.isDeleted()) {
-  activeelements.add(element);
-  if (element.getSalary() < lowestSalary) {
-  lowestSalary = element.getSalary();
-  }
-  }
-  }
-  
-  List<ElementModel> elementsWithLowestSalary = new ArrayList<>();
-  for (ElementModel element : activeelements) {
-  if (element.getSalary() == lowestSalary) {
-  elementsWithLowestSalary.add(element);
-  }
-  }
-  
-  return elementsWithLowestSalary;
-  }
- */
