@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ElementModel {
+
     @JsonProperty("id")
     private int id;
 
@@ -24,10 +25,17 @@ public class ElementModel {
     @JsonProperty("price")
     private double price;
 
-    @JsonProperty("deleted")
-    private boolean deleted;
-
     public ElementModel() {
-        this.deleted = false;
+    }
+
+    public ElementModel(String name, String description, UnitOfWeight unitOfWeight, double price) {
+        this.name = name;
+        this.description = description;
+        this.unitOfWeight = unitOfWeight;
+        this.price = price;
+    }
+
+    public String getUnit(){
+        return unitOfWeight.getSpanish();
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import co.edu.uptc.models.ElementModel;
+import co.edu.uptc.exceptions.ElementNotFoundException;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,10 +17,10 @@ import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ElementManagerService {
@@ -54,7 +55,9 @@ public class ElementManagerService {
         }
     }
 
-    public void addElement(ElementModel element) throws IOException {
+    public ElementModel addElement(ElementModel element) throws IOException {
+        element.validate();
+
         initFile();
 
         RandomAccessFile raf = new RandomAccessFile(getAbsPathElements().toString(), "rw");
@@ -69,6 +72,8 @@ public class ElementManagerService {
 
         raf.writeBytes(chainObjectJson(element) + "\n]");
         raf.close();
+
+        return element;
     }
 
     private int getAndUpdateLastId() throws IOException {
@@ -96,25 +101,15 @@ public class ElementManagerService {
         }
     }
 
-    public String getFileElements() {
-        String contentFile = "";
-        try {
-            String fullContent = Files.readString(getAbsPathElements());
-            List<ElementModel> elements = mapper.readValue(fullContent, new TypeReference<List<ElementModel>>() {
-            });
-            List<ElementModel> filteredPersons = new ArrayList<>();
+    public List<ElementModel> getFileElements() throws IOException {
+        initFile();
+        String fullContent = Files.readString(getAbsPathElements());
+        List<ElementModel> elements = mapper.readValue(fullContent, new TypeReference<List<ElementModel>>() {
+        });
 
-            for (ElementModel element : elements) {
-                if (!element.isDeleted()) {
-                    filteredPersons.add(element);
-                }
-            }
-
-            contentFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(filteredPersons);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return contentFile;
+        return elements.stream()
+                .filter(element -> !element.isDeleted())
+                .collect(Collectors.toList());
     }
 
     public ElementModel getElementById(int id) throws IOException {
@@ -123,13 +118,10 @@ public class ElementManagerService {
         List<ElementModel> elements = mapper.readValue(fullContent, new TypeReference<List<ElementModel>>() {
         });
 
-        for (ElementModel element : elements) {
-            if (element.getId() == id && !element.isDeleted()) {
-                return element;
-            }
-        }
-
-        return null;
+        return elements.stream()
+                .filter(element -> element.getId() == id && !element.isDeleted())
+                .findFirst()
+                .orElseThrow(() -> new ElementNotFoundException("Element with id " + id + " not found"));
     }
 
     public ElementModel deleteElementById(int id) throws IOException {
@@ -138,15 +130,36 @@ public class ElementManagerService {
         List<ElementModel> elements = mapper.readValue(fullContent, new TypeReference<List<ElementModel>>() {
         });
 
-        for (ElementModel element : elements) {
-            if (element.getId() == id && !element.isDeleted()) {
-                element.setDeleted(true);
-                mapper.writerWithDefaultPrettyPrinter().writeValue(getAbsPathElements().toFile(), elements);
-                return element;
-            }
-        }
+        ElementModel elementToDelete = elements.stream()
+                .filter(element -> element.getId() == id && !element.isDeleted())
+                .findFirst()
+                .orElseThrow(() -> new ElementNotFoundException("Element with id " + id + " not found"));
 
-        return null;
+        elementToDelete.setDeleted(true);
+        mapper.writerWithDefaultPrettyPrinter().writeValue(getAbsPathElements().toFile(), elements);
+        return elementToDelete;
+    }
+
+    public ElementModel updateElement(int id, ElementModel updatedElement) throws IOException {
+        String fullContent = Files.readString(getAbsPathElements());
+        List<ElementModel> elements = mapper.readValue(fullContent, new TypeReference<List<ElementModel>>() {
+        });
+
+        ElementModel elementToUpdate = elements.stream()
+                .filter(element -> element.getId() == id && !element.isDeleted())
+                .findFirst()
+                .orElseThrow(() -> new ElementNotFoundException("Element with id " + id + " not found"));
+
+        elementToUpdate.setName(updatedElement.getName());
+        elementToUpdate.setDescription(updatedElement.getDescription());
+        elementToUpdate.setPrice(updatedElement.getPrice());
+        elementToUpdate.setUnitOfWeight(updatedElement.getUnitOfWeight());
+
+        elementToUpdate.validate();
+
+        mapper.writerWithDefaultPrettyPrinter().writeValue(getAbsPathElements().toFile(), elements);
+
+        return elementToUpdate;
     }
 
     private Path getAbsPathElements() {

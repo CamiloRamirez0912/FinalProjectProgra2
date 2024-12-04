@@ -1,33 +1,29 @@
 package co.edu.uptc.view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
+import co.edu.uptc.presenter.ElementPresenter;
+import co.edu.uptc.interfaces.ViewInterface;
+import co.edu.uptc.models.ElementModel;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import java.awt.*;
+import java.util.List;
 
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements ViewInterface {
 
     private JTable table;
     private DefaultTableModel tableModel;
     private JButton nuevoButton;
     private JButton borrarButton;
     private JButton modificarButton;
+
+    private ElementPresenter presenter;
+
+    public MainFrame(ElementPresenter presenter) {
+        this.presenter = presenter;
+        initialize();
+    }
 
     public MainFrame() {
         initialize();
@@ -100,11 +96,7 @@ public class MainFrame extends JFrame {
     }
 
     private Object[][] getTableData() {
-        return new Object[][] {
-                { "0", "Arroz", "Grano básico", "Kilogramo", "1234.0" },
-                { "1", "Chocolate", "Dulce procesado", "Miligramo", "10.0" },
-                { "2", "Panela", "Endulzante natural", "Tonelada", "12345.0" }
-        };
+        return new Object[][] {};
     }
 
     private String[] getTableColumns() {
@@ -179,5 +171,25 @@ public class MainFrame extends JFrame {
 
     private void openDialog() {
         new NewItemDialog(this).setVisible(true);
+    }
+
+    @Override
+    public void showElements(List<ElementModel> elements) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+        for (ElementModel element : elements) {
+            model.addRow(new Object[] { element.getId(), element.getName(), element.getDescription(), element.getUnit(),
+                    element.getPrice() });
+        }
+    }
+
+    @Override
+    public void onSaveElement(String name, String description, String unit, double price) {
+        presenter.onSaveElement(name, description, unit, price);
+    }
+
+    @Override
+    public void setPresenter(ElementPresenter presenter) {
+        this.presenter = presenter;
     }
 }

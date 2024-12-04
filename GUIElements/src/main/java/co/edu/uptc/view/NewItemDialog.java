@@ -145,4 +145,6 @@ public class NewItemDialog extends JDialog {
             panel.add(button);
         }
     }
+
+    
 }
