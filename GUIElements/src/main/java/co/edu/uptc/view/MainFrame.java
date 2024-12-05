@@ -188,17 +188,18 @@ public class MainFrame extends JFrame implements ViewInterface {
     }
 
     public boolean deleteElement() {
+        boolean canDelete = false;
         int indexSelectedRow = table.getSelectedRow();
         if (indexSelectedRow != -1) {
             Object id = table.getValueAt(indexSelectedRow, 0);
             int parseId = Integer.parseInt(id.toString());
             String message = presenter.deleteElement(parseId);
             showErrorMessage(message);
-            return true;
+            canDelete = true;
         } else {
             showErrorMessage("Seleccione un elemento para eliminar");
-            return false;
         }
+        return canDelete;
     }
 
     @Override

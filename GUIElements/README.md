@@ -1,7 +1,7 @@
-# CODIGO SERVIDOR
+# CODIGO CLIENTE
 Autor = Camilo Esteban Ramirez Salas
 
-Este es un proyecto de Spring Boot que se puede compilar y ejecutar como un archivo JAR. A continuación se detallan los pasos necesarios para compilar y ejecutar el proyecto.
+Este es un proyecto de con una interfaz desarrollada en swing, sigue el modelo arquitectónico MVP.
 
 ## Requisitos
 
@@ -22,4 +22,4 @@ Este es un proyecto de Spring Boot que se puede compilar y ejecutar como un arch
 Una vez que el archivo JAR se ha generado, puedes ejecutarlo de la siguiente manera:
 - Dirígete al directorio donde se encuentra el archivo JAR generado. en este caso por usar maven el archivo JAR estará en el directorio target/. 
 - Ejecuta el archivo JAR con el siguiente comando: `java -jar nombre-del-archivo.jar`
-- La aplicación Spring Boot se iniciará y estará disponible en el puerto configurado,que por defecto, el puerto es el 8080.
+- La aplicación se iniciará y con ello mostrará una la interfaz de usuario, para que funcione correctamente se debe estar corriendo el servidor spring. 
