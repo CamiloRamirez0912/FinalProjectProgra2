@@ -193,7 +193,7 @@ public class MainFrame extends JFrame implements ViewInterface {
             Object id = table.getValueAt(indexSelectedRow, 0);
             int parseId = Integer.parseInt(id.toString());
             String message = presenter.deleteElement(parseId);
-            showErrorMessage(message); // Aquí se muestra el mensaje
+            showErrorMessage(message);
             return true;
         } else {
             showErrorMessage("Seleccione un elemento para eliminar");

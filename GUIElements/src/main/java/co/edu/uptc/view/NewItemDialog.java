@@ -128,7 +128,6 @@ public class NewItemDialog extends JDialog {
         closeButton = createButton("Cerrar", new Color(255, 99, 71));
         closeButton.addActionListener(e -> dispose());
 
-        // Al hacer clic en Guardar, crear un nuevo ElementModel y pasarlo al Presenter
         saveButton.addActionListener(e -> saveNewItem());
 
         addButtons(panel, saveButton, closeButton);
