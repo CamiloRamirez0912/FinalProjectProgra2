@@ -18,12 +18,14 @@ public class ApiService implements ModelInterface{
         restTemplate = new RestTemplate();
     }
 
+    @Override
     public List<ElementModel> getAllElements() {
         String url = BASE_URL + "/all";
         ResponseEntity<List<ElementModel>> response = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<List<ElementModel>>() {});
         return response.getBody();
     }
 
+    @Override
     public ElementModel addElement(ElementModel element) {
         String url = BASE_URL + "/add";
         HttpHeaders headers = new HttpHeaders();
@@ -34,6 +36,7 @@ public class ApiService implements ModelInterface{
         return response.getBody();
     }
 
+    @Override
     public ElementModel updateElement(int id, ElementModel element) {
         String url = BASE_URL + "/update/" + id;
         HttpHeaders headers = new HttpHeaders();
@@ -44,9 +47,17 @@ public class ApiService implements ModelInterface{
         return response.getBody();
     }
 
+    @Override
     public ElementModel deleteElement(int id) {
         String url = BASE_URL + "/delete/" + id;
         ResponseEntity<ElementModel> response = restTemplate.exchange(url, HttpMethod.DELETE, null, ElementModel.class);
+        return response.getBody();
+    }
+
+    @Override
+    public ElementModel getElementById(int id) {
+        String url = BASE_URL + "/id/" + id;
+        ResponseEntity<ElementModel> response = restTemplate.exchange(url, HttpMethod.GET, null, ElementModel.class);
         return response.getBody();
     }
 }

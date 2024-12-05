@@ -32,6 +32,8 @@ public class NewItemDialog extends JDialog {
     private JButton saveButton;
     private JButton closeButton;
     private ElementPresenter presenter;
+    private boolean isUpdateMode = false;
+    private int elementId = -1;
 
     public NewItemDialog(JFrame parent) {
         super(parent, "Nuevo Elemento", true);
@@ -42,6 +44,23 @@ public class NewItemDialog extends JDialog {
     private void initialize() {
         setupDialog();
         addComponents();
+    }
+
+    public NewItemDialog(JFrame parent, int id, String name, String description, String unit, double price) {
+        super(parent, "Modificar Elemento", true);
+        presenter = new ElementPresenter();
+        this.isUpdateMode = true;
+        this.elementId = id;
+        initialize(name, description, unit, price);
+    }
+
+    private void initialize(String name, String description, String unit, double price) {
+        initialize();
+        nameField.setText(name);
+        descriptionArea.setText(description);
+        unitComboBox.setSelectedItem(unit);
+        priceField.setText(String.valueOf(price));
+        saveButton.setText("Actualizar");
     }
 
     private void setupDialog() {
@@ -177,7 +196,11 @@ public class NewItemDialog extends JDialog {
             return;
         }
 
-        presenter.onSaveElement(name, description, unit, price);
+        if (isUpdateMode) {
+            presenter.updateElement(elementId, name, description, unit, price);
+        } else {
+            presenter.onSaveElement(name, description, unit, price);
+        }
 
         dispose();
     }

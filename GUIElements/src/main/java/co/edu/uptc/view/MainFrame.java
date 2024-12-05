@@ -171,10 +171,7 @@ public class MainFrame extends JFrame implements ViewInterface {
     private void setupListeners() {
         nuevoButton.addActionListener(e -> openDialog());
         borrarButton.addActionListener(e -> deleteElement());
-    }
-
-    private void openDialog() {
-        new NewItemDialog(this).setVisible(true);
+        modificarButton.addActionListener(e -> updateElement());
     }
 
     @Override
@@ -187,6 +184,28 @@ public class MainFrame extends JFrame implements ViewInterface {
         }
     }
 
+    @Override
+    public void openDialog() {
+        new NewItemDialog(this).setVisible(true);
+    }
+
+    @Override
+    public void updateElement() {
+        int indexSelectedRow = table.getSelectedRow();
+        if (indexSelectedRow != -1) {
+            // Read the selected row's data
+            Object id = table.getValueAt(indexSelectedRow, 0);
+            String name = table.getValueAt(indexSelectedRow, 1).toString();
+            String description = table.getValueAt(indexSelectedRow, 2).toString();
+            String unit = table.getValueAt(indexSelectedRow, 3).toString();
+            String priceStr = table.getValueAt(indexSelectedRow, 4).toString();
+            new NewItemDialog(this, Integer.parseInt(id.toString()), name, description, unit, Double.parseDouble(priceStr)).setVisible(true);
+        } else {
+            showErrorMessage("Seleccione un elemento para modificar");
+        }
+    }
+
+    @Override
     public boolean deleteElement() {
         boolean canDelete = false;
         int indexSelectedRow = table.getSelectedRow();
@@ -207,8 +226,8 @@ public class MainFrame extends JFrame implements ViewInterface {
         presenter.onSaveElement(name, description, unit, price);
     }
 
-
-    public static void showErrorMessage(String message) {
+    @Override
+    public void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 

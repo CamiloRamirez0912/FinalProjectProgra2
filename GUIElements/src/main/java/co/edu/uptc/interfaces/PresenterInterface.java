@@ -6,7 +6,8 @@ public interface PresenterInterface {
     void loadElements();
     void addElement(ElementModel element);
     String deleteElement(int id);
-    void updateElement(int id, ElementModel element);
+    ElementModel getElementById(int id);
+    void updateElement(int id, String name, String description, String unit, double price);
     void onSaveElement(String name, String description, String unit, double price);
     void Run();
 }

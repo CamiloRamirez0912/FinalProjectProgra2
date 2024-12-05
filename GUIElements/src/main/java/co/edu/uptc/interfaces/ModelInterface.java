@@ -12,4 +12,6 @@ public interface ModelInterface {
     public ElementModel updateElement(int id, ElementModel element);
 
     public ElementModel deleteElement(int id);
+
+    public ElementModel getElementById(int id);
 }

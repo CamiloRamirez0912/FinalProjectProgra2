@@ -45,13 +45,20 @@ public class ElementPresenter implements PresenterInterface {
             loadElements();
             return "Elemento eliminado correctamente.";
         } catch (Exception e) {
-            return "Error al eliminar el elemento: " + e.getMessage();
+            return "Seleccione un elemento para eliminar";
         }
     }
 
     @Override
-    public void updateElement(int id, ElementModel element) {
-        apiService.updateElement(id, element);
+    public ElementModel getElementById(int id) {
+        return apiService.getElementById(id);
+    }
+
+    @Override
+    public void updateElement(int id, String name, String description, String unit, double price) {
+        UnitOfWeight unitOfWeight = UnitOfWeight.getUnitOfWeight(unit);
+        ElementModel updatedElement = new ElementModel(name, description, unitOfWeight, price);
+        apiService.updateElement(id, updatedElement);
         loadElements();
     }
 
