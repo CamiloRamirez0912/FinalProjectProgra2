@@ -1,27 +1,29 @@
 package co.edu.uptc.presenter;
 
 import co.edu.uptc.interfaces.PresenterInterface;
-import co.edu.uptc.interfaces.ViewInterface;
 import co.edu.uptc.models.ElementModel;
 import co.edu.uptc.models.UnitOfWeight;
+import co.edu.uptc.view.MainFrame;
 import co.edu.uptc.models.ApiService;
 
 import java.util.List;
 
+
 public class ElementPresenter implements PresenterInterface {
 
-    private ViewInterface view;
+    private MainFrame view;
     private ApiService apiService;
 
-    public ElementPresenter(ViewInterface view) {
-        this.view = view;
+    public ElementPresenter() {
+        view = MainFrame.getInstance();
+        MainFrame.presenter = this;
         this.apiService = new ApiService();
-        this.view.setPresenter(this);
     }
 
     @Override
     public void Run() {
         loadElements();
+        MainFrame.getInstance();
     }
 
     @Override
@@ -50,8 +52,10 @@ public class ElementPresenter implements PresenterInterface {
 
     @Override
     public void onSaveElement(String name, String description, String unit, double price) {
-        UnitOfWeight unitOfWeight = UnitOfWeight.valueOf(unit.toUpperCase());
+        UnitOfWeight unitOfWeight = UnitOfWeight.getUnitOfWeight(unit);
         ElementModel newElement = new ElementModel(name, description, unitOfWeight, price);
-        addElement(newElement); 
+        apiService.addElement(newElement);
+        loadElements();
+        
     }
 }

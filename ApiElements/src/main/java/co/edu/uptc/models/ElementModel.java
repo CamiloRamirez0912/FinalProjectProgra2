@@ -2,7 +2,6 @@ package co.edu.uptc.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import co.edu.uptc.exceptions.InvalidElementException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,23 +29,5 @@ public class ElementModel {
 
     public ElementModel() {
         this.deleted = false;
-    }
-
-    public void validate() {
-        if (name == null || name.length() < 10) {
-            throw new InvalidElementException("Name must be at least 10 characters long");
-        }
-
-        if (description == null || description.length() < 100) {
-            throw new InvalidElementException("Description must be at least 100 characters long");
-        }
-
-        if (price <= 0) {
-            throw new InvalidElementException("Price must be greater than 0");
-        }
-
-        if (unitOfWeight == null) {
-            throw new InvalidElementException("Unit of weight must be specified");
-        }
     }
 }

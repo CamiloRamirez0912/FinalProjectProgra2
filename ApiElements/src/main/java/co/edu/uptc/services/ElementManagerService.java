@@ -5,10 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import co.edu.uptc.models.ElementModel;
-import co.edu.uptc.exceptions.ElementNotFoundException;
-
+import co.edu.uptc.exceptions.ParameterErrorException;
+import co.edu.uptc.helpers.ErrorCodes;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -56,8 +55,7 @@ public class ElementManagerService {
     }
 
     public ElementModel addElement(ElementModel element) throws IOException {
-        element.validate();
-
+        validateElement(element);
         initFile();
 
         RandomAccessFile raf = new RandomAccessFile(getAbsPathElements().toString(), "rw");
@@ -76,29 +74,27 @@ public class ElementManagerService {
         return element;
     }
 
-    private int getAndUpdateLastId() throws IOException {
-        Path filePath = getAbsPathIdElements();
-        File file = filePath.toFile();
-        Map<String, Integer> idInfo = new HashMap<>();
+    public ElementModel updateElement(int id, ElementModel updatedElement) throws IOException {
+        validateElement(updatedElement);
 
-        if (file.exists() && file.length() > 0) {
-            idInfo = mapper.readValue(file, new TypeReference<Map<String, Integer>>() {
-            });
-        }
+        String fullContent = Files.readString(getAbsPathElements());
+        List<ElementModel> elements = mapper.readValue(fullContent, new TypeReference<List<ElementModel>>() {
+        });
 
-        int lastIdelement = idInfo.getOrDefault("lastId", 0);
-        idInfo.put("lastId", lastIdelement + 1);
+        ElementModel elementToUpdate = elements.stream()
+                .filter(element -> element.getId() == id && !element.isDeleted())
+                .findFirst()
+                .orElseThrow(() -> new ParameterErrorException("El elemento con id " + id + " no fue encontrado",
+                        List.of(ErrorCodes.VALUE_EXCEEDS_MAXIMUM)));
 
-        mapper.writeValue(file, idInfo);
-        return lastIdelement;
-    }
+        elementToUpdate.setName(updatedElement.getName());
+        elementToUpdate.setDescription(updatedElement.getDescription());
+        elementToUpdate.setPrice(updatedElement.getPrice());
+        elementToUpdate.setUnitOfWeight(updatedElement.getUnitOfWeight());
 
-    private String chainObjectJson(ElementModel element) {
-        try {
-            return mapper.writeValueAsString(element);
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        mapper.writerWithDefaultPrettyPrinter().writeValue(getAbsPathElements().toFile(), elements);
+
+        return elementToUpdate;
     }
 
     public List<ElementModel> getFileElements() throws IOException {
@@ -121,7 +117,8 @@ public class ElementManagerService {
         return elements.stream()
                 .filter(element -> element.getId() == id && !element.isDeleted())
                 .findFirst()
-                .orElseThrow(() -> new ElementNotFoundException("Element with id " + id + " not found"));
+                .orElseThrow(() -> new ParameterErrorException("El elemento con id " + id + " no fue encontrado",
+                        List.of(ErrorCodes.VALUE_EXCEEDS_MAXIMUM)));
     }
 
     public ElementModel deleteElementById(int id) throws IOException {
@@ -133,33 +130,58 @@ public class ElementManagerService {
         ElementModel elementToDelete = elements.stream()
                 .filter(element -> element.getId() == id && !element.isDeleted())
                 .findFirst()
-                .orElseThrow(() -> new ElementNotFoundException("Element with id " + id + " not found"));
+                .orElseThrow(() -> new ParameterErrorException("El elemento con id " + id + " no fue encontrado",
+                        List.of(ErrorCodes.VALUE_EXCEEDS_MAXIMUM)));
 
         elementToDelete.setDeleted(true);
         mapper.writerWithDefaultPrettyPrinter().writeValue(getAbsPathElements().toFile(), elements);
+
         return elementToDelete;
     }
 
-    public ElementModel updateElement(int id, ElementModel updatedElement) throws IOException {
-        String fullContent = Files.readString(getAbsPathElements());
-        List<ElementModel> elements = mapper.readValue(fullContent, new TypeReference<List<ElementModel>>() {
-        });
+    private int getAndUpdateLastId() throws IOException {
+        Path filePath = getAbsPathIdElements();
+        File file = filePath.toFile();
+        Map<String, Integer> idInfo = new HashMap<>();
 
-        ElementModel elementToUpdate = elements.stream()
-                .filter(element -> element.getId() == id && !element.isDeleted())
-                .findFirst()
-                .orElseThrow(() -> new ElementNotFoundException("Element with id " + id + " not found"));
+        if (file.exists() && file.length() > 0) {
+            idInfo = mapper.readValue(file, new TypeReference<Map<String, Integer>>() {
+            });
+        }
 
-        elementToUpdate.setName(updatedElement.getName());
-        elementToUpdate.setDescription(updatedElement.getDescription());
-        elementToUpdate.setPrice(updatedElement.getPrice());
-        elementToUpdate.setUnitOfWeight(updatedElement.getUnitOfWeight());
+        int lastIdElement = idInfo.getOrDefault("lastId", 0);
+        idInfo.put("lastId", lastIdElement + 1);
 
-        elementToUpdate.validate();
+        mapper.writeValue(file, idInfo);
+        return lastIdElement;
+    }
 
-        mapper.writerWithDefaultPrettyPrinter().writeValue(getAbsPathElements().toFile(), elements);
+    private String chainObjectJson(ElementModel element) {
+        try {
+            return mapper.writeValueAsString(element);
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 
-        return elementToUpdate;
+    private void validateElement(ElementModel element) {
+        if (element.getName() == null || element.getName().length() < 10) {
+            throw new ParameterErrorException("El nombre debe tener minimo 10 caracteres", List.of(ErrorCodes.NAME_REQUIRED));
+        }
+
+        if (element.getDescription() == null || element.getDescription().length() < 100) {
+            throw new ParameterErrorException("La descripcion debe tener minimo 100 caracteres",
+                    List.of(ErrorCodes.DESCRIPTION_REQUIRED));
+        }
+
+        if (element.getPrice() <= 0) {
+            throw new ParameterErrorException("El precio tiene que ser superior a 0", List.of(ErrorCodes.PRICE_REQUIRED));
+        }
+
+        if (element.getUnitOfWeight() == null) {
+            throw new ParameterErrorException("La unidad de peso es requerida.",
+                    List.of(ErrorCodes.UNIT_OF_WEIGHT_REQUIRED));
+        }
     }
 
     private Path getAbsPathElements() {

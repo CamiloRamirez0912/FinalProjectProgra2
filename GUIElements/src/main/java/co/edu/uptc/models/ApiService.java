@@ -4,9 +4,11 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
+import co.edu.uptc.interfaces.ModelInterface;
+
 import java.util.List;
 
-public class ApiService {
+public class ApiService implements ModelInterface{
 
     private static final String BASE_URL = "http://localhost:8080/elements";
 

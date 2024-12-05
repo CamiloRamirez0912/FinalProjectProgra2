@@ -17,16 +17,19 @@ public class MainFrame extends JFrame implements ViewInterface {
     private JButton nuevoButton;
     private JButton borrarButton;
     private JButton modificarButton;
+    private static MainFrame instance;
+    public static ElementPresenter presenter;
 
-    private ElementPresenter presenter;
-
-    public MainFrame(ElementPresenter presenter) {
-        this.presenter = presenter;
-        initialize();
-    }
 
     public MainFrame() {
         initialize();
+    }
+
+    public static MainFrame getInstance() {
+        if (instance == null) {
+            instance = new MainFrame();
+        }
+        return instance;
     }
 
     private void initialize() {
@@ -186,10 +189,5 @@ public class MainFrame extends JFrame implements ViewInterface {
     @Override
     public void onSaveElement(String name, String description, String unit, double price) {
         presenter.onSaveElement(name, description, unit, price);
-    }
-
-    @Override
-    public void setPresenter(ElementPresenter presenter) {
-        this.presenter = presenter;
     }
 }

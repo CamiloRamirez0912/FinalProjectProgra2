@@ -1,53 +1,57 @@
 package co.edu.uptc.exceptions;
 
+import co.edu.uptc.helpers.ErrorCodes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
-
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ElementNotFoundException.class)
-    public ResponseEntity<Object> handleElementNotFoundException(
-            ElementNotFoundException ex, WebRequest request) {
-
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        body.put("status", HttpStatus.NOT_FOUND.value());
-
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    @ExceptionHandler(IntegerOverflowException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidRangeException(IntegerOverflowException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                ex.errorCodes); 
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(InvalidElementException.class)
-    public ResponseEntity<Object> handleInvalidElementException(
-            InvalidElementException ex, WebRequest request) {
+    @ExceptionHandler(ParameterErrorException.class)
+    public ResponseEntity<ErrorResponse> handleParameterError(ParameterErrorException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                ex.errorCodes);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        body.put("status", HttpStatus.BAD_REQUEST.value());
-
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Ha ocurrido un error inesperado.",
+                List.of(ErrorCodes.UNEXPECTED_ERROR));
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(IOException.class)
-    public ResponseEntity<Object> handleIOException(
-            IOException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleIOException(IOException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                ex.getMessage(),
+                List.of(ErrorCodes.UNEXPECTED_ERROR));
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", "An error occurred while processing the file");
-        body.put("details", ex.getMessage());
-        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-
-        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    public String errors(List<String> errorList) {
+        String messages = "";
+        for (String error : errorList) {
+            messages += " - " + error;
+        }
+        return messages;
     }
 }

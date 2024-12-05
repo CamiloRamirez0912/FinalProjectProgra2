@@ -1,5 +1,8 @@
 package co.edu.uptc.models;
 
+import lombok.Getter;
+
+@Getter
 public enum UnitOfWeight {
     KILOGRAM("Kilogramo"),
     GRAM("Gramo"),

@@ -15,10 +15,13 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import co.edu.uptc.presenter.ElementPresenter;
 
 public class NewItemDialog extends JDialog {
 
@@ -28,9 +31,11 @@ public class NewItemDialog extends JDialog {
     private JTextField priceField;
     private JButton saveButton;
     private JButton closeButton;
+    private ElementPresenter presenter;
 
     public NewItemDialog(JFrame parent) {
         super(parent, "Nuevo Elemento", true);
+        presenter = new ElementPresenter();
         initialize();
     }
 
@@ -55,8 +60,8 @@ public class NewItemDialog extends JDialog {
         JPanel panel = createGridPanel();
         addField(panel, 0, "Nombre:", nameField = new JTextField());
         addArea(panel, 1, "Descripción:", descriptionArea = new JTextArea(4, 20));
-        addComboBox(panel, 2, "Unidad de Peso:",
-                unitComboBox = new JComboBox<>(new String[] { "Kilogramo", "Miligramo", "Tonelada" }));
+        addComboBox(panel, 2, "Unidad de Peso:", unitComboBox = new JComboBox<>(
+                new String[] { "Kilogramo", "Miligramo", "Tonelada", "Gramo", "Libra", "Onza" }));
         addField(panel, 3, "Precio:", priceField = new JTextField());
         return panel;
     }
@@ -122,6 +127,10 @@ public class NewItemDialog extends JDialog {
         saveButton = createButton("Guardar", new Color(60, 179, 113));
         closeButton = createButton("Cerrar", new Color(255, 99, 71));
         closeButton.addActionListener(e -> dispose());
+
+        // Al hacer clic en Guardar, crear un nuevo ElementModel y pasarlo al Presenter
+        saveButton.addActionListener(e -> saveNewItem());
+
         addButtons(panel, saveButton, closeButton);
         return panel;
     }
@@ -146,5 +155,32 @@ public class NewItemDialog extends JDialog {
         }
     }
 
-    
+    private void saveNewItem() {
+        String name = nameField.getText();
+        String description = descriptionArea.getText();
+        String unit = (String) unitComboBox.getSelectedItem();
+        double price = 0.0;
+
+        if (name.isEmpty() || description.isEmpty() || unit == null) {
+            JOptionPane.showMessageDialog(this, "Por favor complete todos los campos.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            price = Double.parseDouble(priceField.getText());
+            if (price <= 0) {
+                throw new NumberFormatException("El precio debe ser mayor que cero.");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Por favor ingrese un precio válido.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        presenter.onSaveElement(name, description, unit, price);
+
+        dispose();
+    }
+
 }
