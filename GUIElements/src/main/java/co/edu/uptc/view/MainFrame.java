@@ -170,6 +170,7 @@ public class MainFrame extends JFrame implements ViewInterface {
 
     private void setupListeners() {
         nuevoButton.addActionListener(e -> openDialog());
+        borrarButton.addActionListener(e -> deleteElement());
     }
 
     private void openDialog() {
@@ -186,8 +187,28 @@ public class MainFrame extends JFrame implements ViewInterface {
         }
     }
 
+    public boolean deleteElement() {
+        int indexSelectedRow = table.getSelectedRow();
+        if (indexSelectedRow != -1) {
+            Object id = table.getValueAt(indexSelectedRow, 0);
+            int parseId = Integer.parseInt(id.toString());
+            String message = presenter.deleteElement(parseId);
+            showErrorMessage(message); // Aquí se muestra el mensaje
+            return true;
+        } else {
+            showErrorMessage("Seleccione un elemento para eliminar");
+            return false;
+        }
+    }
+
     @Override
     public void onSaveElement(String name, String description, String unit, double price) {
         presenter.onSaveElement(name, description, unit, price);
     }
+
+
+    public static void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
 }

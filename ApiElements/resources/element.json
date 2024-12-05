@@ -1,8 +1,29 @@
-[{"id":0,"name":"Elemento 0","description":"a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a ","unit_weight":"KILOGRAM","price":10000.0,"deleted":false}
-,
-{"id":1,"name":"Elemento 1","description":"a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a ","unit_weight":"GRAM","price":10000.0,"deleted":false}
-,
-{"id":2,"name":"Elemento 2","description":"b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b ","unit_weight":"TON","price":1234.0,"deleted":false}
-,
-{"id":3,"name":"Elemento 3","description":"c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c ","unit_weight":"MILLIGRAM","price":4321.0,"deleted":false}
-]
+[ {
+  "id" : 0,
+  "name" : "Elemento 0",
+  "description" : "a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a ",
+  "unit_weight" : "KILOGRAM",
+  "price" : 10000.0,
+  "deleted" : false
+}, {
+  "id" : 1,
+  "name" : "Elemento 1",
+  "description" : "a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a ",
+  "unit_weight" : "GRAM",
+  "price" : 10000.0,
+  "deleted" : false
+}, {
+  "id" : 2,
+  "name" : "Elemento 2",
+  "description" : "b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b ",
+  "unit_weight" : "TON",
+  "price" : 1234.0,
+  "deleted" : false
+}, {
+  "id" : 3,
+  "name" : "Elemento 3",
+  "description" : "c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c ",
+  "unit_weight" : "MILLIGRAM",
+  "price" : 4321.0,
+  "deleted" : false
+} ]

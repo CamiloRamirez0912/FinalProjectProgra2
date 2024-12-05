@@ -35,19 +35,24 @@ public class ElementPresenter implements PresenterInterface {
     @Override
     public void addElement(ElementModel element) {
         apiService.addElement(element);
-        loadElements(); // Refresh the table after adding a new element
+        loadElements();
     }
 
     @Override
-    public void deleteElement(int id) {
-        apiService.deleteElement(id);
-        loadElements(); // Refresh the table after deleting an element
+    public String deleteElement(int id) {
+        try {
+            apiService.deleteElement(id);
+            loadElements();
+            return "Elemento eliminado correctamente.";
+        } catch (Exception e) {
+            return "Error al eliminar el elemento: " + e.getMessage();
+        }
     }
 
     @Override
     public void updateElement(int id, ElementModel element) {
         apiService.updateElement(id, element);
-        loadElements(); // Refresh the table after updating an element
+        loadElements();
     }
 
     @Override
