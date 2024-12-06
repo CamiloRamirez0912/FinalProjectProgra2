@@ -34,19 +34,26 @@ public class ElementPresenter implements PresenterInterface {
 
     @Override
     public void addElement(ElementModel element) {
-        apiService.addElement(element);
-        loadElements();
+        ElementModel savedElement = apiService.addElement(element);
+        if (savedElement != null) {
+            loadElements();
+        }
     }
 
     @Override
     public String deleteElement(int id) {
+        String message = "";
         try {
-            apiService.deleteElement(id);
-            loadElements();
-            return "Elemento eliminado correctamente.";
+            ElementModel deletedElement = apiService.deleteElement(id);
+            if (deletedElement != null) {
+                loadElements();
+                message = "Elemento eliminado correctamente.";
+            }
+            message = "No se pudo eliminar el elemento";
         } catch (Exception e) {
-            return "Seleccione un elemento para eliminar";
+            message = "Seleccione un elemento para eliminar";
         }
+        return message;
     }
 
     @Override
@@ -58,8 +65,10 @@ public class ElementPresenter implements PresenterInterface {
     public void updateElement(int id, String name, String description, String unit, double price) {
         UnitOfWeight unitOfWeight = UnitOfWeight.getUnitOfWeight(unit);
         ElementModel updatedElement = new ElementModel(name, description, unitOfWeight, price);
-        apiService.updateElement(id, updatedElement);
-        loadElements();
+        ElementModel result = apiService.updateElement(id, updatedElement);
+        if (result != null) {
+            loadElements();
+        }
     }
 
     @Override

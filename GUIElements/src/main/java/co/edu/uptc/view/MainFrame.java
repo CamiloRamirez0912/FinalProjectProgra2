@@ -57,7 +57,6 @@ public class MainFrame extends JFrame implements ViewInterface {
     private JPanel createLeftPanel() {
         JPanel panel = createPanel(BoxLayout.Y_AXIS, new Color(70, 130, 180), new Dimension(140, 600));
         addLabel(panel, "Elemento", Color.WHITE);
-        addLabel(panel, "Config", Color.WHITE);
         return panel;
     }
 

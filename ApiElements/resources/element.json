@@ -23,7 +23,7 @@
   "id" : 3,
   "name" : "Elemento 3",
   "description" : "c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c ",
-  "unit_weight" : "OUNCE",
-  "price" : 4321.0,
+  "unit_weight" : "KILOGRAM",
+  "price" : 4321.5,
   "deleted" : false
 } ]
