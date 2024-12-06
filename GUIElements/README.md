@@ -1,5 +1,5 @@
 # CODIGO CLIENTE
-Autor = Camilo Esteban Ramirez Salas
+Autor = Camilo Esteban Ramirez Salas - 202214307
 
 Este es un proyecto de con una interfaz desarrollada en swing, sigue el modelo arquitectónico MVP.
 
