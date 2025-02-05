@@ -4,10 +4,12 @@ import co.edu.uptc.interfaces.PresenterInterface;
 import co.edu.uptc.models.ElementModel;
 import co.edu.uptc.models.UnitOfWeight;
 import co.edu.uptc.view.MainFrame;
+import co.edu.uptc.view.StatisticsWindow;
 import co.edu.uptc.models.ApiService;
 
+import java.io.IOException;
 import java.util.List;
-
+import java.util.Map;
 
 public class ElementPresenter implements PresenterInterface {
 
@@ -48,8 +50,9 @@ public class ElementPresenter implements PresenterInterface {
             if (deletedElement != null) {
                 loadElements();
                 message = "Elemento eliminado correctamente.";
+            } else {
+                message = "No se pudo eliminar el elemento";
             }
-            message = "No se pudo eliminar el elemento";
         } catch (Exception e) {
             message = "Seleccione un elemento para eliminar";
         }
@@ -77,6 +80,15 @@ public class ElementPresenter implements PresenterInterface {
         ElementModel newElement = new ElementModel(name, description, unitOfWeight, price);
         apiService.addElement(newElement);
         loadElements();
-        
+    }
+
+    public void loadStatistics(StatisticsWindow statisticsWindow) {
+        try {
+            double averagePrice = apiService.getAveragePrice();
+            Map<UnitOfWeight, Long> summary = apiService.getSummaryByUnit();
+            statisticsWindow.updateStatistics(averagePrice, summary);
+        } catch (IOException e) {
+            view.showErrorMessage("Error al cargar las estadísticas: " + e.getMessage());
+        }
     }
 }

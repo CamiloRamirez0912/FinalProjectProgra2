@@ -4,9 +4,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import co.edu.uptc.models.ElementModel;
+import co.edu.uptc.models.UnitOfWeight;
 import co.edu.uptc.services.ElementManagerService;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,5 +53,18 @@ public class ElementController {
           @PathVariable int id, @RequestBody ElementModel updatedElement) throws IOException {
       ElementModel element = elementManagerService.updateElement(id, updatedElement);
       return ResponseEntity.ok(element);
+  }
+
+  //parcial
+  @GetMapping("/average-price")
+  public ResponseEntity<Double> getAveragePrice() throws IOException {
+    double averagePrice = elementManagerService.calculateAveragePrice();
+    return ResponseEntity.ok(averagePrice);
+  }
+
+  @GetMapping("/summary-by-unit")
+  public ResponseEntity<Map<UnitOfWeight, Long>> getSummaryByUnit() throws IOException {
+      Map<UnitOfWeight, Long> summary = elementManagerService.getSummaryByUnit();
+      return ResponseEntity.ok(summary);
   }
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import co.edu.uptc.models.ElementModel;
+import co.edu.uptc.models.UnitOfWeight;
 import co.edu.uptc.exceptions.ParameterErrorException;
 import co.edu.uptc.helpers.ErrorCodes;
 import java.io.BufferedWriter;
@@ -190,5 +191,21 @@ public class ElementManagerService {
 
     private Path getAbsPathIdElements() {
         return Paths.get(pathDirectory.toString(), pathIdPeople);
+    }
+
+    //parcial
+    public double calculateAveragePrice() throws IOException {
+        List<ElementModel> elements = getFileElements();
+        if (elements.isEmpty()) {
+            return 0.0;
+        }
+        double total = elements.stream().mapToDouble(ElementModel::getPrice).sum();
+        return total / elements.size();
+    }
+
+    public Map<UnitOfWeight, Long> getSummaryByUnit() throws IOException {
+    List<ElementModel> elements = getFileElements();
+    return elements.stream()
+            .collect(Collectors.groupingBy(ElementModel::getUnitOfWeight, Collectors.counting()));
     }
 }

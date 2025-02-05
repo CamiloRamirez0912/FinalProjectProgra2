@@ -9,7 +9,7 @@
   "id" : 1,
   "name" : "Elemento 1",
   "description" : "a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a ",
-  "unit_weight" : "GRAM",
+  "unit_weight" : "KILOGRAM",
   "price" : 10000.0,
   "deleted" : false
 }, {
@@ -17,13 +17,20 @@
   "name" : "Elemento 2",
   "description" : "b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b ",
   "unit_weight" : "TON",
-  "price" : 1234.0,
+  "price" : 1250000.0,
   "deleted" : false
 }, {
   "id" : 3,
   "name" : "Elemento 3",
   "description" : "c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c ",
   "unit_weight" : "KILOGRAM",
-  "price" : 4321.5,
+  "price" : 4300.0,
+  "deleted" : false
+}, {
+  "id" : 4,
+  "name" : "Elemento de prueba",
+  "description" : "Este es un elemento de prueba agregado desde Postman. Debe tener al menos 100 caracteres para cumplir con las validaciones del servicio.",
+  "unit_weight" : "KILOGRAM",
+  "price" : 100000.0,
   "deleted" : false
 } ]

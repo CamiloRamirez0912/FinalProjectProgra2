@@ -1,16 +1,18 @@
 package co.edu.uptc.models;
 
+import co.edu.uptc.config.ApiConfig;
+import co.edu.uptc.interfaces.ModelInterface;
+import co.edu.uptc.view.MainFrame;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import co.edu.uptc.config.ApiConfig;
-import co.edu.uptc.interfaces.ModelInterface;
-import co.edu.uptc.view.MainFrame;
-
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class ApiService implements ModelInterface {
 
@@ -134,6 +136,27 @@ public class ApiService implements ModelInterface {
             view.showErrorMessage("Error al obtener elemento: " + parseErrorMessage(e.getResponseBodyAsString()));
             return null;
         }
+    }
+
+    public double getAveragePrice() throws IOException {
+        String url = buildUrl("/average-price");
+        ResponseEntity<Double> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                Double.class);
+        return response.getBody();
+    }
+
+    public Map<UnitOfWeight, Long> getSummaryByUnit() throws IOException {
+        String url = buildUrl("/summary-by-unit");
+        ResponseEntity<Map<UnitOfWeight, Long>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<Map<UnitOfWeight, Long>>() {
+                });
+        return response.getBody();
     }
 
     private String parseErrorMessage(String errorResponse) {

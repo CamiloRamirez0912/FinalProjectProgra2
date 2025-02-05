@@ -1,12 +1,12 @@
 package co.edu.uptc.view;
 
-import co.edu.uptc.presenter.ElementPresenter;
 import co.edu.uptc.interfaces.ViewInterface;
 import co.edu.uptc.models.ElementModel;
+import co.edu.uptc.models.UnitOfWeight;
+import co.edu.uptc.presenter.ElementPresenter;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
 import java.awt.*;
 import java.util.List;
 
@@ -17,9 +17,9 @@ public class MainFrame extends JFrame implements ViewInterface {
     private JButton nuevoButton;
     private JButton borrarButton;
     private JButton modificarButton;
+    private JButton estadisticasButton; // Nuevo botón para estadísticas
     private static MainFrame instance;
     public static ElementPresenter presenter;
-
 
     public MainFrame() {
         initialize();
@@ -132,7 +132,8 @@ public class MainFrame extends JFrame implements ViewInterface {
         nuevoButton = createButton("Nuevo", new Color(60, 179, 113));
         borrarButton = createButton("Borrar", new Color(255, 99, 71));
         modificarButton = createButton("Modificar", new Color(30, 144, 255));
-        addButtons(panel, nuevoButton, borrarButton, modificarButton);
+        estadisticasButton = createButton("Estadísticas", new Color(255, 165, 0)); // Nuevo botón
+        addButtons(panel, nuevoButton, borrarButton, modificarButton, estadisticasButton);
         return panel;
     }
 
@@ -171,6 +172,13 @@ public class MainFrame extends JFrame implements ViewInterface {
         nuevoButton.addActionListener(e -> openDialog());
         borrarButton.addActionListener(e -> deleteElement());
         modificarButton.addActionListener(e -> updateElement());
+        estadisticasButton.addActionListener(e -> showStatistics()); // Listener para el nuevo botón
+    }
+
+    private void showStatistics() {
+        StatisticsWindow statisticsWindow = new StatisticsWindow(this);
+        presenter.loadStatistics(statisticsWindow); // Pasar la ventana de estadísticas al presenter
+        statisticsWindow.setVisible(true);
     }
 
     @Override
@@ -198,7 +206,8 @@ public class MainFrame extends JFrame implements ViewInterface {
             String description = table.getValueAt(indexSelectedRow, 2).toString();
             String unit = table.getValueAt(indexSelectedRow, 3).toString();
             String priceStr = table.getValueAt(indexSelectedRow, 4).toString();
-            new NewItemDialog(this, Integer.parseInt(id.toString()), name, description, unit, Double.parseDouble(priceStr)).setVisible(true);
+            new NewItemDialog(this, Integer.parseInt(id.toString()), name, description, unit,
+                    Double.parseDouble(priceStr)).setVisible(true);
         } else {
             showErrorMessage("Seleccione un elemento para modificar");
         }
@@ -229,5 +238,4 @@ public class MainFrame extends JFrame implements ViewInterface {
     public void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
-
 }
